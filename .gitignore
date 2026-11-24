@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environment (never commit ~777 MB of packages)
+.venv/
+venv/
+env/
+
+# Local runtime state — personal memory, notes, timers, preferences
+data/
+
+# Logs and generated screenshots
+logs/
+*.log
+*.png
+*.wav
+
+# Local secrets / environment
+.env
+*.env
+ngrok.yml
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini

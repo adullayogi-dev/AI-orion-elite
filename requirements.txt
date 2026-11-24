@@ -1,0 +1,40 @@
+# ============================================================
+# ORION ELITE — dependency manifest
+# Tested on Python 3.14 / Windows 11 / Ollama 0.40+
+# All packages are free & open-source. No API keys required.
+# ============================================================
+
+# Core audio + math
+numpy>=2.0
+sounddevice>=0.5
+soundfile>=0.12
+
+# Speech: offline STT (Ears) + offline TTS (Mouth)
+faster-whisper>=1.1
+pyttsx3>=2.90
+
+# Wake word engine (ONNX backend — avoids tflite-runtime issues)
+openwakeword>=0.6
+onnxruntime>=1.18
+
+# Brain: local LLM connector
+ollama>=0.4
+
+# Agent tools: knowledge + live web + browser automation
+wikipedia>=1.4
+duckduckgo-search>=6.0
+selenium>=4.20
+webdriver-manager>=4.0
+
+# HUD (Episode 9) + Mobile control (Episode 10)
+streamlit>=1.35
+psutil>=5.9
+Flask>=3.0
+pyngrok>=7.0
+
+# Instant activation fallback (console-based, no admin needed)
+# 'keyboard' is optional: used only if installed; msvcrt fallback is built in.
+keyboard>=0.13; sys_platform == "win32"
+
+# Utilities
+requests>=2.31

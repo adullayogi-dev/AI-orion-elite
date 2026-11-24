@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORION ELITE // MOBILE</title>
+<style>
+  :root { --cy:#00e5ff; --am:#ff8a00; --bg:#05070d; }
+  * { box-sizing: border-box; }
+  body {
+    background: radial-gradient(circle at 50% 0%, #0d1826 0%, var(--bg) 60%);
+    color: var(--cy); font-family: 'Courier New', monospace;
+    text-align: center; padding: 18px; margin: 0; min-height: 100vh;
+  }
+  h1 { text-shadow: 0 0 14px var(--cy); letter-spacing: 2px; margin: 8px 0 0; }
+  .subtitle { color: #7fa6b8; margin: 4px 0 24px; font-size: 13px; }
+  .btn {
+    display: block; width: 100%; max-width: 420px; margin: 12px auto; padding: 18px;
+    font: inherit; font-size: 16px; font-weight: bold; letter-spacing: 1px;
+    background: transparent; color: var(--cy); border: 1px solid var(--cy);
+    border-radius: 12px; box-shadow: 0 0 14px #00e5ff44; cursor: pointer;
+    transition: transform .15s, box-shadow .2s, background .2s;
+  }
+  .btn:active {
+    transform: scale(.96); background: var(--cy); color: #001018;
+    box-shadow: 0 0 26px var(--cy);
+  }
+  .btn.amber { color: var(--am); border-color: var(--am); box-shadow: 0 0 14px #ff8a0044; }
+  .btn.amber:active { background: var(--am); color: #180d00; box-shadow: 0 0 26px var(--am); }
+  .cmd { display: flex; gap: 8px; max-width: 420px; margin: 24px auto 8px; }
+  .cmd input {
+    flex: 1; min-width: 0; padding: 14px; border-radius: 10px;
+    background: #0b1018; color: var(--cy); border: 1px solid #00e5ff55;
+    font: inherit; outline: none;
+  }
+  .cmd button {
+    padding: 14px 18px; border-radius: 10px; background: var(--cy);
+    color: #001018; border: 0; font: inherit; font-weight: bold; cursor: pointer;
+  }
+  #reply {
+    max-width: 440px; margin: 20px auto; min-height: 56px; padding: 14px;
+    border: 1px dashed #00e5ff44; border-radius: 10px; color: #d8f6ff;
+    font-size: 14px; line-height: 1.5;
+  }
+  .status { font-size: 11px; color: #4d7a8a; margin-top: 26px; }
+</style>
+</head>
+<body>
+  <h1>🤖 ORION ELITE</h1>
+  <p class="subtitle">MOBILE COMMAND CENTER</p>
+
+  <button class="btn" onclick="send('youtube')">📺 OPEN YOUTUBE</button>
+  <button class="btn" onclick="send('google')">🌐 OPEN GOOGLE</button>
+  <button class="btn" onclick="send('calculator')">🧮 OPEN CALCULATOR</button>
+  <button class="btn" onclick="send('status')">📊 SYSTEM STATUS</button>
+  <button class="btn amber" onclick="send('morning')">☀️ GOOD MORNING, SIR</button>
+
+  <div class="cmd">
+    <input id="text" placeholder="Type a command ..." autocomplete="off">
+    <button onclick="sendText()">SEND</button>
+  </div>
+
+  <div id="reply">Awaiting orders, sir ...</div>
+
+<script>
+  const out = document.getElementById('reply');
+  function show(data) {
+    out.textContent = (data && data.reply) ? data.reply : 'No response, sir.';
+    out.style.borderColor = data && data.status === 'success' ? '#00e5ff88' : '#ff0066';
+  }
+  function send(action) {
+    out.textContent = 'Executing ...';
+    fetch('/command/' + encodeURIComponent(action))
+      .then(r => r.json()).then(show)
+      .catch(e => { out.textContent = 'Link error: ' + e; });
+  }
+  function sendText() {
+    const el = document.getElementById('text');
+    const text = el.value.trim();
+    if (!text) return;
+    el.value = '';
+    out.textContent = 'Thinking ...';
+    fetch('/api/command', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({text: text})
+    }).then(r => r.json()).then(show)
+      .catch(e => { out.textContent = 'Link error: ' + e; });
+  }
+  document.getElementById('text').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendText();
+  });
+</script>
+<p class="status">ORION ELITE v1.0 // LOCAL AI // ZERO CLOUD</p>
+</body>
+</html>
