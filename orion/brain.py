@@ -24,6 +24,24 @@ from orion.tools import ToolRegistry
 
 
 class OrionBrain:
+    # Instant, predictable answers for small talk. These never touch the LLM
+    # or any device control, so Orion feels responsive even offline.
+    _SMALL_TALK = {
+        "hello": "Hello, Yogi. How can I help?",
+        "hi": "Hello, Yogi. How can I help?",
+        "hey": "Hello, Yogi. How can I help?",
+        "hey orion": "Hello, Yogi. How can I help?",
+        "namaste": "Hello, Yogi. How can I help?",
+        "how are you": "I'm doing well, Yogi. Ready when you are.",
+        "how are you doing": "I'm doing well, Yogi. Ready when you are.",
+        "thank you": "You're welcome, Yogi.",
+        "thanks": "You're welcome, Yogi.",
+        "dhanyavaad": "You're welcome, Yogi.",
+        "good morning": "Good morning, Yogi.",
+        "good evening": "Good evening, Yogi.",
+        "good night": "Good night, Yogi.",
+    }
+
     def __init__(self, memory: Memory | None = None, tools: ToolRegistry | None = None):
         self.memory = memory or Memory()
         self.tools = tools or ToolRegistry()
@@ -108,6 +126,13 @@ class OrionBrain:
         memory_reply = self._memory_reply(low)
         if memory_reply:
             return say(memory_reply)
+
+        # 2b. Small talk is answered locally and instantly — no LLM delay and
+        # no chance of the model inventing an action the user never requested.
+        clean = re.sub(r"\s+", " ", low).strip(" .?!,")
+        small_talk = self._SMALL_TALK.get(clean)
+        if small_talk:
+            return say(small_talk)
 
         # 3. Fast local tools (diagram: 'analyse the command' -> act).
         if use_tools:

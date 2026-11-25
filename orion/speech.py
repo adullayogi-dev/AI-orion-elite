@@ -30,6 +30,21 @@ def _spoken(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip(" |")
 
 
+def _safe_language(value: object) -> str | None:
+    """Whisper accepts a single ISO code or None — never a list of languages.
+
+    A stale preference such as ['te', 'hi', 'en'] used to reach Whisper and
+    raise "'[...]' is not a valid language code", so every transcription
+    silently failed and Orion appeared dead. Normalise anything unexpected
+    back to auto-detect instead of crashing.
+    """
+    if isinstance(value, str):
+        code = value.strip().lower()
+        if re.fullmatch(r"[a-z]{2}", code):
+            return code
+    return None
+
+
 class SpeechEngine:
     def __init__(self) -> None:
         self._whisper = None
@@ -70,7 +85,8 @@ class SpeechEngine:
             # Bias Whisper toward Orion's exact commands / app names / people
             # so "Open Chrome" is not transcribed as "Opening door". language
             # is None -> auto-detect so Telugu / Hindi are understood too.
-            use_language = language if language is not None else config.SPEECH["language"]
+            requested = language if language is not None else config.SPEECH["language"]
+            use_language = _safe_language(requested)
             segments, _info = self.whisper.transcribe(
                 np.asarray(audio, dtype=np.float32).reshape(-1),
                 beam_size=beam_size or config.SPEECH["beam_size"],
@@ -82,7 +98,11 @@ class SpeechEngine:
             text = "".join(sg.text for sg in segments if sg.avg_logprob >-1.0).strip()
             log.debug("Transcribed: %r", text)
             return text
-        except Exception as exc:
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except BaseException as exc:
+            # faster-whisper can raise pyo3_runtime.PanicException (a
+            # BaseException), which would otherwise kill the command loop.
             log.error("Transcription failed: %s", exc)
             return ""
 

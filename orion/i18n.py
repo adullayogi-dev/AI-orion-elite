@@ -239,6 +239,20 @@ _EXACT = {
         {"te": "విండోని ఎడమ వైపు పెడుతున్నాను, యోగి.", "hi": "विंडो को बाईं ओर रख रहा हूँ, योगी।"},
     "Snapping the window to the right, sir.":
         {"te": "విండోని కుడి వైపు పెడుతున్నాను, యోగి.", "hi": "विंडो को दाईं ओर रख रहा हूँ, योगी।"},
+    # Instant local small-talk replies (handled without the LLM).
+    "Hello, Yogi. How can I help?":
+        {"te": "హలో యోగి, ఎలా సాయం చేయాలి?", "hi": "नमस्ते योगी, क्या मदद चाहिए?"},
+    "I'm doing well, Yogi. Ready when you are.":
+        {"te": "నేను బాగున్నాను యోగి, మీరు చెప్పండి.",
+         "hi": "मैं ठीक हूँ योगी, बताइए क्या करना है।"},
+    "You're welcome, Yogi.":
+        {"te": "అదేం పర్లేదు, యోగి.", "hi": "कुछ नहीं, योगी।"},
+    "Good morning, Yogi.":
+        {"te": "శుభోదయం, యోగి.", "hi": "सुप्रभात, योगी।"},
+    "Good evening, Yogi.":
+        {"te": "శుభ సాయంత్రం, యోగి.", "hi": "शुभ संध्या, योगी।"},
+    "Good night, Yogi.":
+        {"te": "శుభ రాత్రి, యోగి.", "hi": "शुभ रात्रि, योगी।"},
 }
 
 # Regex patterns -> templates with {app} / {rest} placeholders.

@@ -193,6 +193,7 @@ class AudioEngine:
         threshold = threshold if threshold is not None else config.AUDIO["silence_threshold"]
         silence_timeout = silence_timeout or config.AUDIO["silence_timeout"]
         max_seconds = max_seconds or config.AUDIO["max_record_seconds"]
+        idle_timeout = float(config.AUDIO.get("idle_timeout", 5.0))
         block_seconds = 0.2
         block_samples = max(1, int(round(block_seconds * self.capture_samplerate)))
         chunks: queue.Queue[np.ndarray] = queue.Queue()
@@ -260,8 +261,16 @@ class AudioEngine:
             gate = max(threshold, min(noise_floor * 3.0, 0.15))
             log.info("Listening (noise %.4f, voice gate %.4f) ...", noise_floor, gate)
             print("Speak now ...")
+            last_activity = time.monotonic()
 
             while True:
+                # Do not sit in a 20-second empty recording when the user
+                # activated Orion but did not actually speak. Return to the
+                # wake loop quickly so the next SPACE / "Hey Orion" is instant.
+                if (not speaking
+                        and time.monotonic() - last_activity > idle_timeout):
+                    log.debug("No speech after activation — returning to standby")
+                    break
                 chunk = next_chunk(0.5)
                 if chunk is None:
                     if time.monotonic() - started > max_seconds:
@@ -282,6 +291,7 @@ class AudioEngine:
                     continue
 
                 if level >= gate:
+                    last_activity = time.monotonic()
                     if speaking:
                         # Speech already accepted — keep streaming without
                         # re-checking every chunk (avoids clipping syllables).

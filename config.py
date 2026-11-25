@@ -82,6 +82,7 @@ AUDIO = {
     "silence_threshold": 0.02,   # reference Ep8 value
     "wake_threshold": 0.05,      # reference Ep8 value
     "silence_timeout": 1.5,     # seconds of quiet that ends a command
+    "idle_timeout": 5.0,        # no speech after waking -> return to standby
     "max_record_seconds": 20,   # hard cap for dynamic recording (Episode 8)
     "device": 1,                # verified best mic: AMD Microphone Array (MME)
     # Silero VAD (ONNX model bundled with faster-whisper) gates the mic so
